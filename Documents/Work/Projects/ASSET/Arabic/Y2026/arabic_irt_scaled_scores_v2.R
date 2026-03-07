@@ -181,7 +181,7 @@ for (lvl in levels) {
   # For level 9, reset discrimination parameter a to 1
   if (lvl == 9) {
     params_df$a <- 1
-    cat("  Level 9: discrimination parameter (a) set to 0\n")
+    cat("  Level 9: discrimination parameter (a) set to 1\n")
   }
 
   all_item_params[[as.character(lvl)]] <- params_df
