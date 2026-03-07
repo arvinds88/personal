@@ -178,9 +178,9 @@ for (lvl in levels) {
   params_df$qcode_x  <- paste0("X", rownames(p_mat))   # "X{qcode}"
   params_df$level    <- lvl
 
-  # For level 9, reset discrimination parameter a to 0
+  # For level 9, reset discrimination parameter a to 1
   if (lvl == 9) {
-    params_df$a <- 0
+    params_df$a <- 1
     cat("  Level 9: discrimination parameter (a) set to 0\n")
   }
 
