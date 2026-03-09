@@ -238,26 +238,26 @@ for (lvl in levels) {
   drop_b_high <- params_df$b >= b_upper
   drop_a_low  <- params_df$a <= a_min
 
-  drop_any <- drop_manual | drop_b_low | drop_b_high | drop_a_low
+  # Assign drop_reason on the full params_df before subsetting to avoid size mismatch
+  params_df$drop_reason <- case_when(
+    drop_manual ~ "manual",
+    drop_b_low  ~ sprintf("b <= %g", b_lower),
+    drop_b_high ~ sprintf("b >= %g", b_upper),
+    drop_a_low  ~ sprintf("a <= %g", a_min),
+    TRUE        ~ NA_character_
+  )
+
+  drop_any <- !is.na(params_df$drop_reason)
 
   if (any(drop_any)) {
-    dropped <- params_df[drop_any, ] %>%
-      mutate(
-        drop_reason = case_when(
-          drop_manual ~ "manual",
-          drop_b_low  ~ sprintf("b <= %g", b_lower),
-          drop_b_high ~ sprintf("b >= %g", b_upper),
-          drop_a_low  ~ sprintf("a <= %g", a_min),
-          TRUE        ~ "unknown"
-        )
-      )
+    dropped <- params_df[drop_any, ]
     dropped_log[[as.character(lvl)]] <- dropped
     cat(sprintf("  Level %s: dropping %d / %d items — %s\n",
                 lvl, nrow(dropped), n_before,
                 paste(sprintf("%s (%s)", dropped$qcode_x, dropped$drop_reason), collapse = ", ")))
   }
 
-  all_item_params[[as.character(lvl)]] <- params_df[!drop_any, ]
+  all_item_params[[as.character(lvl)]] <- params_df[!drop_any, ] %>% select(-drop_reason)
   cat(sprintf("  Level %s: %d items retained after filtering\n",
               lvl, nrow(all_item_params[[as.character(lvl)]])))
 }
