@@ -5,7 +5,7 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 
-output_dir <- "/Users/arvind/Documents/Work/Projects/ASSET/Arabic/Y2026/"
+output_dir <- "/Users/arvind/Documents/Work/Projects/ASSET/Arabic/Y2026v2/"
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@ parse_ini <- function(filepath) {
   for (line in lines) {
     line <- trimws(line)
     if (grepl("^\\[", line)) {
-      section <- gsub("[\\[\\]]", "", line)
+      section <- gsub("\\[|\\]", "", line)
       config[[section]] <- list()
     } else if (grepl("=", line) && !is.null(section)) {
       parts <- strsplit(line, "=", fixed = TRUE)[[1]]
@@ -173,8 +173,9 @@ for (lvl in levels) {
   p_mat              <- cbind(item_coef[, 2], item_coef[, 1], 0)
   colnames(p_mat)    <- c("a", "b", "c")
 
+  
   params_df          <- as.data.frame(p_mat)
-  params_df$qcode_x  <- rownames(p_mat)   # "X{qcode}" — R prefixes numeric col names with X
+  params_df$qcode_x  <- paste0("X", rownames(p_mat))   # "X{qcode}"
   params_df$level    <- lvl
 
   all_item_params[[as.character(lvl)]] <- params_df
